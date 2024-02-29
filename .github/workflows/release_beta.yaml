@@ -10,16 +10,16 @@ on:
         description: 'Release tag'
         required: false
         type: string
-  push:
-    branches: 
-      - main
-    paths:
-      - '**.js'
-      - '**.html'
-      - '**.css'
-      - '**.go'
-      - '**.mod'
-      - '**.sum'
+  # push:
+  #   branches: 
+  #     - main
+  #   paths:
+  #     - '**.js'
+  #     - '**.html'
+  #     - '**.css'
+  #     - '**.go'
+  #     - '**.mod'
+  #     - '**.sum'
 
 jobs:
 
@@ -32,7 +32,7 @@ jobs:
         shell: bash
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -48,7 +48,6 @@ jobs:
           TAG_NAME="v0.0.$(date -u +"%Y%m%d%H%M%S")"
         fi
         echo "TAG_NAME=${TAG_NAME}" >> "$GITHUB_ENV"
-        mkdir -p ./bin
         bash ./build.sh
         
 
