@@ -14,7 +14,7 @@ English | [中文](./README.zh-CN.md)
 go install github.com/tianluanchen/go-shc@latest
 ```
 
-You can also download the pre-compiled program from the Github Releases directly.
+You can also go to the Actions page of the repository to download the pre-compiled binary from the Artifact.
 
 Please note that to package shell scripts into binary programs, your system should have the Go development environment properly configured.
 

@@ -14,7 +14,7 @@
 go install github.com/tianluanchen/go-shc@latest
 ```
 
-你也可以直接下载 Github Release 中已编译好的程序
+你也可以进入仓库的 Actions 界面，从 Artifact 中获取已编译好的程序
 
 注意，想要将 shell 脚本打包成二进制程序，需要你的系统已经配置好 Go 的开发环境
 
