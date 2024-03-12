@@ -2,7 +2,6 @@
 
 [![GoVersion](https://img.shields.io/badge/Go-v1.20.2-blue?logo=Go&style=flat-square)](https://go.dev/)
 [![Go Reference](https://pkg.go.dev/badge/github.com/tianluanchen/go-shc.svg)](https://pkg.go.dev/github.com/tianluanchen/go-shc)
-[![Beta](https://img.shields.io/badge/-Beta-orange?style=flat-square)](./)
 
 Obfuscate Shell scripts or package them into binary programs. Note that obfuscation and packaging only provide a certain level of code concealment.
 
