@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"crypto/md5"
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/fs"
 	"net/http"
 	"os"
 	"strings"
@@ -33,18 +31,9 @@ func init() {
 }
 
 func NewApp(trimPath bool) *http.ServeMux {
-	hasher := md5.New()
-	web.Walk(".", func(path string, info fs.FileInfo, data []byte) error {
-		if !info.IsDir() {
-			hasher.Write(data)
-		}
-		return nil
-	})
-	etag := fmt.Sprintf(`"%s"`, hex.EncodeToString(hasher.Sum(nil)))
-
 	mux := http.NewServeMux()
-	fs := http.FS(web.FS)
-	fileServer := http.FileServer(fs)
+	fileServer := http.FileServer(http.FS(web.FS))
+	etag := fmt.Sprintf(`"%s"`, hex.EncodeToString(web.MD5Hash))
 
 	returnResp := func(w http.ResponseWriter, s int, msg string) {
 		w.WriteHeader(s)

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"crypto/md5"
 	"embed"
 	"io"
 	"io/fs"
@@ -16,6 +17,8 @@ var FS fs.FS
 // Map of the url path
 var PathMap = map[string]string{}
 
+var MD5Hash []byte
+
 func init() {
 	var err error
 	FS, err = fs.Sub(staticFS, "static")
@@ -26,9 +29,10 @@ func init() {
 	if ExistFile("index.html") {
 		PathMap["/"] = "index.html"
 	}
-	Walk(".", func(path string, info fs.FileInfo, data []byte) error {
+	hasher := md5.New()
+	fs.WalkDir(FS, ".", func(path string, d fs.DirEntry, err error) error {
 		urlPath := "/" + path
-		if info.IsDir() {
+		if d.IsDir() {
 			urlPath := urlPath + "/"
 			indexPage := path + "/index.html"
 			if ExistFile(indexPage) {
@@ -36,9 +40,12 @@ func init() {
 			}
 		} else {
 			PathMap[urlPath] = path
+			f, _ := FS.Open(path)
+			io.Copy(hasher, f)
 		}
 		return nil
 	})
+	MD5Hash = hasher.Sum(nil)
 }
 
 // Determine if a file exists in a path
@@ -50,17 +57,4 @@ func ExistFile(path string) bool {
 	}
 	info, _ := f.Stat()
 	return !info.IsDir()
-}
-
-// Iterate through all the files in the static resource
-func Walk(root string, fn func(path string, info fs.FileInfo, data []byte) error) error {
-	return fs.WalkDir(FS, root, func(path string, d fs.DirEntry, err error) error {
-		f, _ := FS.Open(path)
-		info, _ := f.Stat()
-		var bs []byte
-		if !info.IsDir() {
-			bs, _ = io.ReadAll(f)
-		}
-		return fn(path, info, bs)
-	})
 }
