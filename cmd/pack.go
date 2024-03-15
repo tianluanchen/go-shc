@@ -31,9 +31,9 @@ var packCmd = &cobra.Command{
 		opt.UseTempFile, _ = cmd.Flags().GetBool("use-temp-file")
 		opt.GoCompiler, _ = cmd.Flags().GetString("compiler")
 		script, _ := cmd.Flags().GetString("script")
-		noGlob, _ := cmd.Flags().GetBool("no-glob")
+		glob, _ := cmd.Flags().GetBool("glob")
 		if len(args) > 0 {
-			if !noGlob {
+			if glob {
 				args = getGlobFiles(args...)
 			}
 			var buf []byte
@@ -78,7 +78,7 @@ var packCmd = &cobra.Command{
 }
 
 func init() {
-	packCmd.Flags().Bool("no-glob", false, "Don't use glob pattern")
+	packCmd.Flags().Bool("glob", false, "use glob pattern")
 	packCmd.Flags().Bool("only-source", false, "Only generate source code and write to stdout or output file")
 	packCmd.Flags().StringP("script", "s", "", "Specify the input script")
 	packCmd.Flags().String("shell", "", "Specify the shell")

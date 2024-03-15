@@ -31,9 +31,9 @@ var rootCmd = &cobra.Command{
 		opt.VarCountLimit, _ = cmd.Flags().GetInt("var-count-limit")
 		script, _ := cmd.Flags().GetString("script")
 		output, _ := cmd.Flags().GetString("output")
-		noGlob, _ := cmd.Flags().GetBool("no-glob")
+		glob, _ := cmd.Flags().GetBool("glob")
 		if len(args) > 0 {
-			if !noGlob {
+			if glob {
 				args = getGlobFiles(args...)
 			}
 			var buf []byte
@@ -58,7 +58,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Flags().Bool("no-glob", false, "Don't use glob pattern")
+	rootCmd.Flags().Bool("glob", false, "use glob pattern")
 	rootCmd.Flags().StringP("script", "s", "", "Specify the input script")
 	rootCmd.Flags().StringP("output", "o", "", "Specify the output file")
 	rootCmd.Flags().String("shell", "", "Specify the shell")
