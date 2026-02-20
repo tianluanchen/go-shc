@@ -1,0 +1,78 @@
+* {
+    box-sizing: border-box;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-size: 16px;
+    margin: 0;
+    font-family: Tahoma, Arial, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+    background-color: rgb(216, 216, 216);
+    color: rgb(35, 35, 35);
+}
+
+textarea {
+    resize: none;
+    height: 240px;
+    font-size: 16px;
+}
+
+select {
+    padding: 1px 3px;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.block>* {
+    margin: 0 0 8px;
+}
+
+.option>*,
+.control>* {
+    color: rgb(20, 20, 20);
+    display: inline-block;
+    margin: 0px 15px 5px 0px;
+}
+
+.control>* {
+    margin: 0px 5px 5px 0px;
+}
+
+.control,
+.option {
+    margin-bottom: 3px;
+}
+
+main {
+    border-radius: 3px;
+    box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.12);
+    background-color: rgb(236, 236, 236);
+    margin: 1rem auto;
+    padding: 1.5rem 2rem;
+    width: 90%;
+    max-width: 960px;
+    min-width: 300px;
+}
+
+main>* {
+    margin: 0 0 10px;
+}
+
+#curl>span {
+    line-height: 1.5;
+}
+
+#curl>span,
+.tip {
+    overflow-wrap: break-word;
+    white-space: break-spaces;
+}
+
+.tip {
+    font-size: 14px;
+    color: rgb(72, 72, 72);
+}

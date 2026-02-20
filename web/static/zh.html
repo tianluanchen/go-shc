@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go-SHC - 在线混淆Shell脚本或打包Shell脚本为二进制程序</title>
+    <meta name="keywords" content="Go-SHC,混淆,打包,,Shell,脚本,Unix,Linux">
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./index.css">
+    <link rel="alternate" hreflang="en" href="./" />
+    <link rel="alternate" hreflang="zh" href="./zh.html" />
+    <link rel="alternate" hreflang="x-default" href="./" />
+</head>
+
+<body>
+    <main>
+        <h1><span style="cursor: pointer;" onclick="location.reload()" title="点击刷新页面">Go-SHC</span></h1>
+        <h3>在线混淆Shell脚本或打包Shell脚本为二进制程序，注意，混淆和打包仅在一定程度上保障你的代码隐密。</h3>
+        <div><select id="language"></select></div>
+        <hr>
+        <div class="block">
+            <h4>混淆脚本</h4>
+            <div class="option">
+                <label>
+                    <span>Shell</span>
+                    <select id="obfuscateShell" data-default='""'
+                        data-options='[["自动检测", ""], "bash", "sh", "dash", "zsh", ["自定义", "custom"]]'></select>
+                    <input style="display: none;" spellcheck="false" autocomplete="off" id="obfuscateShellCustom"
+                        placeholder="输入名称或路径" type="text">
+                </label>
+                <label>
+                    <span>混淆程度（越高生成代码越多）</span>
+                    <select id="obfuscateLevel" data-default="2"
+                        data-options='[["高", "5,2"], ["较高", "4,4"], ["中", "3,5"], ["较低", "2,7"], ["低", "2,9"]]'></select>
+                    <input style="display: none;" spellcheck="false" autocomplete="off" id="obfuscateShellCustom"
+                        placeholder="输入名称或路径" type="text">
+                </label>
+                <label>
+                    <span>通过创建临时文件运行（当脚本内容过大时，该项自动生效）</span>
+                    <input autocomplete="off" type="checkbox" id="obfuscateUseTempFile">
+                </label>
+            </div>
+            <div class="control">
+                <button onclick="fillObfuscateInputWithFile()">导入本地文件</button>
+                <button onclick="asyncWrapperWithElem(generateObfuscateCodes,this)">生成混淆代码</button>
+                <button onclick="obfuscateInput.setValue('');obfuscateOutput.setValue('')">清空内容</button>
+            </div>
+            <div class="flex" style="justify-content: space-between;">
+                <div style="width: 47%;min-width: 300px;margin-bottom: 10px;">
+                    <div style="margin-bottom: 4px;">源码输入&nbsp;<button data-tip="复制成功🎉"
+                            onclick="copyWithBtn(obfuscateInput.getValue(),this)">复制</button>
+                    </div>
+                    <textarea id="obfuscateInput" style="width:100%;height: 200px;" placeholder="输入脚本代码"
+                        spellcheck="false" autocomplete="off"></textarea>
+                    <div data-tmpl="行数：#line#   字数：#char#   大小：#size#" class="tip"></div>
+                </div>
+                <div style="width: 47%;min-width: 300px;">
+                    <div style="margin-bottom: 4px;">混淆输出&nbsp;<button data-tip="复制成功🎉"
+                            onclick="copyWithBtn(obfuscateOutput.getValue(),this)">复制</button>&nbsp;<button
+                            onclick="downloadTextFile(obfuscateOutput.getValue(),'obfuscated.sh')">下载</button>
+                    </div>
+                    <textarea id="obfuscateOutput" style="width:100%;height: 200px;" spellcheck="false"
+                        autocomplete="off"></textarea>
+                    <div data-tmpl="行数：#line#   字数：#char#   大小：#size#" class="tip"></div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="block">
+            <h4>打包二进制程序</h4>
+            <div class="option">
+                <label>
+                    <span>Shell</span>
+                    <select id="packShell" data-default='""'
+                        data-options='[["自动检测", ""], "bash", "sh", "dash", "zsh", ["自定义", "custom"]]'></select>
+                    <input style="display: none;" spellcheck="false" autocomplete="off" id="packShellCustom"
+                        placeholder="输入名称或路径" type="text">
+                </label>
+                <label>
+                    <span>系统架构</span>
+                    <select id="osarch" data-default='"linux/amd64"'
+                        data-options='["android/amd64", "android/arm64", "darwin/amd64", "darwin/arm64", "freebsd/386", "freebsd/amd64", "freebsd/arm", "freebsd/arm64", "freebsd/riscv64", "js/wasm", "linux/386", "linux/amd64", "linux/arm", "linux/arm64", "linux/loong64", "linux/mips", "linux/mips64", "linux/mips64le", "linux/mipsle", "linux/ppc64", "linux/ppc64le", "linux/riscv64", "linux/s390x", "openbsd/386", "openbsd/amd64", "openbsd/arm", "openbsd/arm64", "openbsd/mips64", "windows/386", "windows/amd64", "windows/arm", "windows/arm64"]'></select>
+                </label>
+                <label>
+                    <span>通过创建临时文件运行（脚本内容过大时可勾选该项）</span>
+                    <input autocomplete="off" type="checkbox" id="packUseTempFile">
+                </label>
+            </div>
+            <div class="control">
+                <button onclick="fillPackInputWithFile()">导入本地文件</button>
+                <button onclick="packInput.setValue(obfuscateOutput.getValue())">导入上方混淆输出</button>
+                <button onclick="asyncWrapperWithElem(getPackFile,this)">生成打包程序</button>
+                <button onclick="generateCurlCmd()">生成curl(POSIX)命令</button>
+                <button onclick="packInput.setValue('')">清空内容</button>
+                <button data-tip="复制成功🎉" onclick="copyWithBtn(packInput.getValue(),this)">复制内容</button>
+            </div>
+            <textarea id="packInput" style="width: 100%;" placeholder="输入脚本代码" spellcheck="false"
+                autocomplete="off"></textarea>
+            <div data-tmpl="行数：#line#   字数：#char#   大小：#size#" class="tip"></div>
+            <div id="curl" style="display:none">
+                <span></span>&nbsp;&nbsp;<button data-tip="复制成功🎉">复制</button>
+                <br><br>
+                <span></span>&nbsp;&nbsp;<button data-tip="复制成功🎉">复制</button>
+            </div>
+            <form id="send" style="display: none;" action="/shc" method="POST" enctype="multipart/form-data">
+                <textarea name="script"></textarea>
+            </form>
+        </div>
+    </main>
+    <a href="https://github.com/tianluanchen/go-shc" class="github-corner" aria-label="View source on GitHub"><svg
+            width="80" height="80" viewBox="0 0 250 250"
+            style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+            <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+            <path
+                d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+                fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+            <path
+                d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+                fill="currentColor" class="octo-body"></path>
+        </svg></a>
+    <style>
+        .github-corner:hover .octo-arm {
+            animation: octocat-wave 560ms ease-in-out
+        }
+
+        @keyframes octocat-wave {
+
+            0%,
+            100% {
+                transform: rotate(0)
+            }
+
+            20%,
+            60% {
+                transform: rotate(-25deg)
+            }
+
+            40%,
+            80% {
+                transform: rotate(10deg)
+            }
+        }
+
+        @media (max-width:500px) {
+            .github-corner:hover .octo-arm {
+                animation: none
+            }
+
+            .github-corner .octo-arm {
+                animation: octocat-wave 560ms ease-in-out
+            }
+        }
+    </style>
+    <script src="./obfuscate.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>
